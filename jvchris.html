@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureVault — Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --bg: #031230;
+            --card: #fff;
+            --border: #e2e4e9;
+            --border-strong: #c8ccd6;
+            --text: #1a1d23;
+            --text-2: #4b5060;
+            --text-muted: #8a8fa8;
+            --accent: #2563eb;
+            --accent-bg: #eff4ff;
+            --accent-border: #bfcffd;
+            --success: #0f9e5e;
+            --success-bg: #edfaf3;
+            --success-border: #86efcc;
+            --danger: #dc2626;
+            --danger-bg: #fef2f2;
+            --danger-border: #fca5a5;
+            --warning: #d97706;
+            --warning-bg: #fffbeb;
+            --warning-border: #fcd34d;
+            --radius: 8px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, .08), 0 1px 2px rgba(0, 0, 0, .05);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            color: var(--text)
+        }
+
+        /* Card */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: var(--shadow)
+        }
+
+        /* Logo */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 1.75rem
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 20px
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text)
+        }
+
+        /* Tabs */
+        .tab-row {
+            display: flex;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 1.5rem
+        }
+
+        .tab {
+            flex: 1;
+            padding: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            color: var(--text-2);
+            cursor: pointer;
+            transition: background .15s, color .15s
+        }
+
+        .tab.active {
+            background: var(--accent);
+            color: #fff
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 10px 12px;
+            border-radius: var(--radius);
+            font-size: 13px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            display: none
+        }
+
+        .alert.show {
+            display: flex
+        }
+
+        .alert.error {
+            background: var(--danger-bg);
+            border: 1px solid var(--danger-border);
+            color: var(--danger)
+        }
+
+        .alert.success {
+            background: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: var(--success)
+        }
+
+        .alert.info {
+            background: var(--accent-bg);
+            border: 1px solid var(--accent-border);
+            color: var(--accent)
+        }
+
+        /* Fields */
+        .field {
+            margin-bottom: 1rem
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-2);
+            margin-bottom: 5px
+        }
+
+        input[type=text],
+        input[type=email],
+        input[type=password] {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius);
+            font-size: 14px;
+            color: var(--text);
+            outline: none;
+            transition: border-color .15s, box-shadow .15s;
+            background: #fff
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .12)
+        }
+
+        input::placeholder {
+            color: var(--text-muted)
+        }
+
+        .input-wrap {
+            position: relative
+        }
+
+        .input-wrap input {
+            padding-right: 38px
+        }
+
+        .eye-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            padding: 2px
+        }
+
+        .eye-btn:hover {
+            color: var(--text-2)
+        }
+
+        /* Strength bar */
+        .strength-bar {
+            display: flex;
+            gap: 4px;
+            margin-top: 6px;
+            height: 3px
+        }
+
+        .strength-seg {
+            flex: 1;
+            border-radius: 2px;
+            background: var(--border);
+            transition: background .3s
+        }
+
+        .strength-seg.weak {
+            background: #dc2626
+        }
+
+        .strength-seg.fair {
+            background: #d97706
+        }
+
+        .strength-seg.good {
+            background: #0f9e5e
+        }
+
+        .hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 5px
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border-radius: var(--radius);
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity .15s, transform .1s
+        }
+
+        .btn:active {
+            transform: scale(.99)
+        }
+
+        .btn:disabled {
+            opacity: .5;
+            cursor: default
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #1d4ed8
+        }
+
+        /* Divider */
+        .divider {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: 1rem 0;
+            position: relative
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 44%;
+            height: 1px;
+            background: var(--border)
+        }
+
+        .divider::before {
+            left: 0
+        }
+
+        .divider::after {
+            right: 0
+        }
+
+        .link-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 0
+        }
+
+        .link-btn:hover {
+            color: #1d4ed8
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 6px
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        /* 2FA digits */
+        .totp-grid {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 1rem 0
+        }
+
+        .totp-digit {
+            width: 44px;
+            height: 52px;
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius);
+            font-size: 22px;
+            font-weight: 600;
+            text-align: center;
+            color: var(--text);
+            outline: none;
+            background: #fff
+        }
+
+        .totp-digit:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .12)
+        }
+
+        /* Sections */
+        .section {
+            display: none
+        }
+
+        .section.active {
+            display: block
+        }
+
+        /* Dashboard */
+        #dashboard {
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            max-width: 580px
+        }
+
+        .dash-header {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow)
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--accent-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--accent);
+            flex-shrink: 0;
+            border: 1px solid var(--accent-border)
+        }
+
+        .user-info {
+            flex: 1
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text)
+        }
+
+        .user-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px
+        }
+
+        .logout-btn {
+            border: 1px solid var(--border-strong);
+            background: none;
+            color: var(--text-2);
+            font-size: 13px;
+            padding: 7px 14px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background .15s
+        }
+
+        .logout-btn:hover {
+            background: var(--bg)
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--shadow)
+        }
+
+        .stat-val {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text)
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 3px
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow)
+        }
+
+        .panel-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-bottom: 12px
+        }
+
+        .log-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px
+        }
+
+        .log-item:last-child {
+            border-bottom: none
+        }
+
+        .log-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        .log-dot.ok {
+            background: #0f9e5e
+        }
+
+        .log-dot.warn {
+            background: #d97706
+        }
+
+        .log-dot.fail {
+            background: #dc2626
+        }
+
+        .log-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-left: auto
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 500
+        }
+
+        .badge-green {
+            background: var(--success-bg);
+            color: var(--success);
+            border: 1px solid var(--success-border)
+        }
+
+        .badge-warn {
+            background: var(--warning-bg);
+            color: var(--warning);
+            border: 1px solid var(--warning-border)
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            padding: 4px 0;
+            color: var(--text)
+        }
+
+        /* QR code */
+        .qr-wrap {
+            width: 120px;
+            height: 120px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff
+        }
+
+        /* Checkbox */
+        .checkbox-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 1.25rem
+        }
+
+        .checkbox-row input[type=checkbox] {
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+            cursor: pointer;
+            accent-color: var(--accent)
+        }
+
+        .checkbox-row label {
+            font-size: 13px;
+            cursor: pointer;
+            color: var(--text-2);
+            margin: 0
+        }
+
+        /* Footer note */
+        .note {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 1.5rem;
+            max-width: 420px
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ── AUTH CARD ── -->
+    <div class="card" id="auth-card">
+        <div class="logo">
+            <div class="logo-icon"><i class="ti ti-shield-lock"></i></div>
+            <span class="logo-text">SecureVault</span>
+        </div>
+
+        <div class="tab-row">
+            <button class="tab active" onclick="switchTab('login')" id="tab-login">Sign in</button>
+            <button class="tab" onclick="switchTab('register')" id="tab-register">Create account</button>
+        </div>
+
+        <div id="alert-box" class="alert"></div>
+
+        <!-- LOGIN -->
+        <div class="section active" id="section-login">
+            <div class="field">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+            </div>
+            <div class="field">
+                <label for="login-password">Password</label>
+                <div class="input-wrap">
+                    <input type="password" id="login-password" placeholder="Enter your password"
+                        autocomplete="current-password">
+                    <button class="eye-btn" onclick="togglePw('login-password',this)" aria-label="Show password"><i
+                            class="ti ti-eye"></i></button>
+                </div>
+            </div>
+            <div style="text-align:right;margin-bottom:1rem">
+                <button class="link-btn" onclick="showForgot()">Forgot password?</button>
+            </div>
+            <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Sign in</button>
+            <p style="text-align:center;font-size:13px;color:var(--text-muted);margin-top:1rem">
+                No account? <button class="link-btn" onclick="switchTab('register')">Create one</button>
+            </p>
+        </div>
+
+        <!-- REGISTER -->
+        <div class="section" id="section-register">
+            <div class="field">
+                <label for="reg-name">Full name</label>
+                <input type="text" id="reg-name" placeholder="Alex Johnson">
+            </div>
+            <div class="field">
+                <label for="reg-email">Email</label>
+                <input type="email" id="reg-email" placeholder="you@example.com">
+            </div>
+            <div class="field">
+                <label for="reg-password">Password</label>
+                <div class="input-wrap">
+                    <input type="password" id="reg-password" placeholder="Create a strong password"
+                        oninput="checkStrength(this.value)" autocomplete="new-password">
+                    <button class="eye-btn" onclick="togglePw('reg-password',this)" aria-label="Show password"><i
+                            class="ti ti-eye"></i></button>
+                </div>
+                <div class="strength-bar">
+                    <div class="strength-seg" id="s1"></div>
+                    <div class="strength-seg" id="s2"></div>
+                    <div class="strength-seg" id="s3"></div>
+                    <div class="strength-seg" id="s4"></div>
+                </div>
+                <p class="hint" id="strength-hint">Use 8+ chars, uppercase, a number and a symbol</p>
+            </div>
+            <div class="field">
+                <label for="reg-confirm">Confirm password</label>
+                <div class="input-wrap">
+                    <input type="password" id="reg-confirm" placeholder="Re-enter password" autocomplete="new-password">
+                    <button class="eye-btn" onclick="togglePw('reg-confirm',this)" aria-label="Show password"><i
+                            class="ti ti-eye"></i></button>
+                </div>
+            </div>
+            <div class="checkbox-row">
+                <input type="checkbox" id="enable-2fa">
+                <label for="enable-2fa">Enable two-factor authentication (2FA) — adds a 6-digit code on each
+                    login</label>
+            </div>
+            <button class="btn btn-primary" id="reg-btn" onclick="doRegister()">Create account</button>
+            <p style="text-align:center;font-size:13px;color:var(--text-muted);margin-top:1rem">
+                Already have an account? <button class="link-btn" onclick="switchTab('login')">Sign in</button>
+            </p>
+        </div>
+
+        <!-- 2FA VERIFY -->
+        <div class="section" id="section-2fa">
+            <div style="text-align:center;margin-bottom:1.25rem">
+                <div style="font-size:36px;color:var(--accent);margin-bottom:8px"><i class="ti ti-device-mobile"></i>
+                </div>
+                <p style="font-size:15px;font-weight:600;margin-bottom:4px">Two-factor authentication</p>
+                <p style="font-size:13px;color:var(--text-muted)">Enter the 6-digit code from your authenticator
+                    app.<br><strong>Demo code: 123456</strong></p>
+            </div>
+            <div class="totp-grid" id="totp-inputs"></div>
+            <button class="btn btn-primary" onclick="verify2FA()" id="verify-btn">Verify code</button>
+            <p style="text-align:center;margin-top:.75rem;font-size:13px">
+                <button class="link-btn" onclick="switchSection('login')">Back to sign in</button>
+            </p>
+        </div>
+
+        <!-- FORGOT PASSWORD -->
+        <div class="section" id="section-forgot">
+            <div style="text-align:center;margin-bottom:1.25rem">
+                <div style="font-size:32px;color:var(--accent);margin-bottom:8px"><i class="ti ti-mail"></i></div>
+                <p style="font-size:15px;font-weight:600;margin-bottom:4px">Reset your password</p>
+                <p style="font-size:13px;color:var(--text-muted)">Enter your email and we'll send a reset link.</p>
+            </div>
+            <div class="field">
+                <label for="forgot-email">Email</label>
+                <input type="email" id="forgot-email" placeholder="you@example.com">
+            </div>
+            <button class="btn btn-primary" onclick="doForgot()">Send reset link</button>
+            <p style="text-align:center;margin-top:.75rem;font-size:13px">
+                <button class="link-btn" onclick="switchSection('login')">Back to sign in</button>
+            </p>
+        </div>
+
+        <!-- 2FA SETUP -->
+        <div class="section" id="section-setup-2fa">
+            <div style="text-align:center;margin-bottom:1rem">
+                <p style="font-size:15px;font-weight:600;margin-bottom:6px">Set up authenticator</p>
+                <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Scan this QR code with Google
+                    Authenticator or Authy, then enter the 6-digit code to confirm.</p>
+                <div class="qr-wrap">
+                    <svg width="90" height="90" viewBox="0 0 9 9" style="image-rendering:pixelated"
+                        aria-label="Demo QR code">
+                        <rect width="9" height="9" fill="white" />
+                        <g fill="#111">
+                            <rect x="0" y="0" width="3" height="3" />
+                            <rect x="6" y="0" width="3" height="3" />
+                            <rect x="0" y="6" width="3" height="3" />
+                            <rect x="1" y="1" width="1" height="1" fill="white" />
+                            <rect x="7" y="1" width="1" height="1" fill="white" />
+                            <rect x="1" y="7" width="1" height="1" fill="white" />
+                            <rect x="4" y="0" width="1" height="1" />
+                            <rect x="3" y="1" width="2" height="1" />
+                            <rect x="4" y="2" width="1" height="1" />
+                            <rect x="3" y="4" width="3" height="1" />
+                            <rect x="4" y="5" width="1" height="1" />
+                            <rect x="6" y="5" width="1" height="1" />
+                            <rect x="4" y="3" width="1" height="1" />
+                            <rect x="6" y="3" width="3" height="1" />
+                            <rect x="3" y="6" width="1" height="3" />
+                            <rect x="5" y="6" width="1" height="1" />
+                            <rect x="7" y="7" width="2" height="2" />
+                        </g>
+                    </svg>
+                </div>
+                <p
+                    style="font-size:11px;color:var(--text-muted);word-break:break-all;font-family:monospace;margin-bottom:12px">
+                    DEMO-SECRET-BASE32-KEY-ABC123</p>
+            </div>
+            <div class="totp-grid" id="setup-totp-inputs"></div>
+            <button class="btn btn-primary" onclick="confirmSetup2FA()" style="margin-top:.5rem">Confirm and
+                continue</button>
+        </div>
+    </div>
+
+    <!-- ── DASHBOARD ── -->
+    <div id="dashboard">
+        <div class="dash-header">
+            <div class="avatar" id="dash-avatar">AJ</div>
+            <div class="user-info">
+                <div class="user-name" id="dash-name">Alex Johnson</div>
+                <div class="user-meta" id="dash-meta"></div>
+            </div>
+            <button class="logout-btn" onclick="doLogout()"><i class="ti ti-logout"></i> Sign out</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-val" id="session-timer">00:00</div>
+                <div class="stat-label">Session time</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="login-count">1</div>
+                <div class="stat-label">Logins today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" style="color:var(--success)"><i class="ti ti-check"></i></div>
+                <div class="stat-label">Password hashed</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">Security log</div>
+            <div id="activity-log"></div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">Security status</div>
+            <div id="security-checks"></div>
+        </div>
+    </div>
+
+    <p class="note"><i class="ti ti-info-circle" style="vertical-align:-2px"></i> Demo only — all data is stored in
+        memory and cleared on refresh. In production, use bcrypt/Argon2 on a server with HTTPS and secure HttpOnly
+        session cookies.</p>
+
+    <script>
+        // ── State ──────────────────────────────────────────────────────────
+        const store = { users: {}, session: null, loginAttempts: {}, activityLog: [] };
+        let sessionStart = null, timerID = null, pending2FAUser = null;
+
+        // ── Helpers ────────────────────────────────────────────────────────
+        const $ = id => document.getElementById(id);
+
+        function sanitize(s) {
+            return String(s).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        async function hashPassword(pw) {
+            const data = new TextEncoder().encode(pw + 'SECUREVAULT_SALT_v1_DEMO');
+            const buf = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function validateEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+        function validatePassword(p) { return p.length >= 8 && /[A-Z]/.test(p) && /[0-9]/.test(p) && /[^A-Za-z0-9]/.test(p); }
+
+        // ── Password strength ──────────────────────────────────────────────
+        function checkStrength(pw) {
+            let score = 0;
+            if (pw.length >= 8) score++;
+            if (/[A-Z]/.test(pw)) score++;
+            if (/[0-9]/.test(pw)) score++;
+            if (/[^A-Za-z0-9]/.test(pw)) score++;
+            ['s1', 's2', 's3', 's4'].forEach((id, i) => {
+                const el = $(id);
+                el.className = 'strength-seg';
+                if (i < score) el.classList.add(['', 'weak', 'fair', 'good', 'good'][score]);
+            });
+            $('strength-hint').textContent = ['', 'Weak — add length', 'Fair — add numbers', 'Good — add a symbol', 'Strong password ✓'][score] || 'Use 8+ chars, uppercase, a number and a symbol';
+        }
+
+        // ── Eye toggle ─────────────────────────────────────────────────────
+        function togglePw(id, btn) {
+            const el = $(id), show = el.type === 'password';
+            el.type = show ? 'text' : 'password';
+            btn.innerHTML = show ? '<i class="ti ti-eye-off"></i>' : '<i class="ti ti-eye"></i>';
+        }
+
+        // ── Alerts ─────────────────────────────────────────────────────────
+        const ALERT_ICONS = { error: 'ti-alert-circle', success: 'ti-circle-check', info: 'ti-info-circle' };
+        function showAlert(msg, type = 'error') {
+            const box = $('alert-box');
+            box.className = `alert ${type} show`;
+            box.innerHTML = `<i class="ti ${ALERT_ICONS[type]}"></i><span>${sanitize(msg)}</span>`;
+        }
+        function clearAlert() { const b = $('alert-box'); b.className = 'alert'; b.innerHTML = ''; }
+
+        // ── Tab / section switching ────────────────────────────────────────
+        function switchTab(tab) {
+            ['login', 'register'].forEach(t => $('tab-' + t).classList.toggle('active', t === tab));
+            switchSection(tab);
+            clearAlert();
+        }
+        function switchSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            $('section-' + id).classList.add('active');
+        }
+        function showForgot() { switchSection('forgot'); clearAlert(); }
+
+        // ── TOTP input builder ─────────────────────────────────────────────
+        function buildTOTPInputs(containerId) {
+            const c = $(containerId);
+            c.innerHTML = '';
+            for (let i = 0; i < 6; i++) {
+                const inp = document.createElement('input');
+                inp.type = 'text'; inp.maxLength = 1; inp.className = 'totp-digit'; inp.inputMode = 'numeric';
+                inp.setAttribute('aria-label', `Digit ${i + 1} of 6`);
+                inp.addEventListener('input', e => {
+                    e.target.value = e.target.value.replace(/\D/, '');
+                    if (e.target.value && inp.nextSibling) inp.nextSibling.focus();
+                });
+                inp.addEventListener('keydown', e => {
+                    if (e.key === 'Backspace' && !e.target.value && inp.previousSibling) inp.previousSibling.focus();
+                });
+                inp.addEventListener('paste', e => {
+                    e.preventDefault();
+                    const digits = (e.clipboardData.getData('text').replace(/\D/g, '')).slice(0, 6);
+                    [...c.querySelectorAll('.totp-digit')].forEach((el, j) => { el.value = digits[j] || ''; });
+                });
+                c.appendChild(inp);
+            }
+        }
+        function getTOTPValue(cid) {
+            return [...$(cid).querySelectorAll('.totp-digit')].map(i => i.value).join('');
+        }
+
+        // ── Activity log ───────────────────────────────────────────────────
+        function addLog(text, status = 'ok') {
+            store.activityLog.unshift({ text, status, time: new Date().toLocaleTimeString() });
+            if (store.activityLog.length > 8) store.activityLog.pop();
+        }
+        function renderLog() {
+            $('activity-log').innerHTML = store.activityLog.map(l =>
+                `<div class="log-item">
+      <div class="log-dot ${l.status}"></div>
+      <span>${sanitize(l.text)}</span>
+      <span class="log-time">${l.time}</span>
+    </div>`
+            ).join('') || '<p style="font-size:13px;color:var(--text-muted)">No activity yet.</p>';
+        }
+
+        // ── Security checks panel ──────────────────────────────────────────
+        function renderSecurityChecks(user) {
+            const checks = [
+                { label: 'Password hashed with SHA-256 + salt (use bcrypt/Argon2 in production)', ok: true },
+                { label: 'Input sanitized — XSS and injection protection', ok: true },
+                { label: 'Brute-force lockout after 5 failed attempts (30s cooldown)', ok: true },
+                { label: 'Two-factor authentication (TOTP)', ok: !!user.want2fa },
+                { label: 'Session token (UUID v4)', ok: !!store.session?.token },
+                { label: 'Session expiry — auto logout after 30 minutes', ok: true },
+            ];
+            $('security-checks').innerHTML = checks.map(c =>
+                `<div class="check-item">
+      <i class="ti ${c.ok ? 'ti-circle-check' : 'ti-circle-x'}" style="color:var(--${c.ok ? 'success' : 'danger'});font-size:16px"></i>
+      <span>${c.label}</span>
+    </div>`
+            ).join('');
+        }
+
+        // ── Register ───────────────────────────────────────────────────────
+        async function doRegister() {
+            clearAlert();
+            const name = $('reg-name').value.trim();
+            const email = $('reg-email').value.trim().toLowerCase();
+            const pw = $('reg-password').value;
+            const confirm = $('reg-confirm').value;
+            const want2fa = $('enable-2fa').checked;
+
+            if (!name || name.length < 2) { showAlert('Enter your full name.'); return; }
+            if (!validateEmail(email)) { showAlert('Enter a valid email address.'); return; }
+            if (!validatePassword(pw)) { showAlert('Password needs 8+ chars, an uppercase letter, a number, and a symbol.'); return; }
+            if (pw !== confirm) { showAlert("Passwords don't match."); return; }
+            if (store.users[email]) { showAlert('An account with that email already exists.'); return; }
+
+            const btn = $('reg-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Creating account…';
+
+            await new Promise(r => setTimeout(r, 800));
+            const hash = await hashPassword(pw);
+            store.users[email] = { name, email, hash, want2fa, loginCount: 0, createdAt: new Date() };
+
+            btn.disabled = false; btn.textContent = 'Create account';
+            addLog(`Account created: ${email}`, 'ok');
+
+            if (want2fa) {
+                buildTOTPInputs('setup-totp-inputs');
+                switchSection('setup-2fa');
+                showAlert('Account created. Set up your authenticator app below.', 'success');
+            } else {
+                showAlert('Account created. You can now sign in.', 'success');
+                setTimeout(() => { clearAlert(); switchTab('login'); }, 1600);
+            }
+        }
+
+        async function confirmSetup2FA() {
+            const code = getTOTPValue('setup-totp-inputs');
+            if (code.length < 6) { showAlert('Enter the full 6-digit code.'); return; }
+            if (code !== '123456') { showAlert('Code doesn\'t match. Demo code is 123456.'); return; }
+            showAlert('Two-factor authentication enabled.', 'success');
+            setTimeout(() => { clearAlert(); switchTab('login'); }, 1500);
+        }
+
+        // ── Login ──────────────────────────────────────────────────────────
+        async function doLogin() {
+            clearAlert();
+            const email = $('login-email').value.trim().toLowerCase();
+            const pw = $('login-password').value;
+
+            if (!validateEmail(email)) { showAlert('Enter a valid email address.'); return; }
+            if (!pw) { showAlert('Enter your password.'); return; }
+
+            // Rate-limit / brute-force check
+            const now = Date.now();
+            const att = store.loginAttempts[email] || { count: 0, lockedUntil: 0 };
+            if (att.lockedUntil > now) {
+                const s = Math.ceil((att.lockedUntil - now) / 1000);
+                showAlert(`Too many failed attempts. Try again in ${s}s.`);
+                return;
+            }
+
+            const btn = $('login-btn');
+            btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Signing in…';
+            await new Promise(r => setTimeout(r, 700));
+
+            const user = store.users[email];
+            const hash = user ? await hashPassword(pw) : null;
+
+            if (!user || hash !== user.hash) {
+                att.count = (att.count || 0) + 1;
+                if (att.count >= 5) {
+                    att.lockedUntil = Date.now() + 30000;
+                    att.count = 0;
+                    showAlert('Account locked for 30 seconds after 5 failed attempts.');
+                } else {
+                    showAlert(`Incorrect email or password. Attempt ${att.count} of 5.`);
+                }
+                store.loginAttempts[email] = att;
+                addLog(`Failed login attempt: ${email}`, 'fail');
+                btn.disabled = false; btn.textContent = 'Sign in';
+                return;
+            }
+
+            // Reset attempt counter on success
+            store.loginAttempts[email] = { count: 0, lockedUntil: 0 };
+            btn.disabled = false; btn.textContent = 'Sign in';
+
+            if (user.want2fa) {
+                pending2FAUser = user;
+                buildTOTPInputs('totp-inputs');
+                switchSection('2fa');
+                return;
+            }
+            startSession(user);
+        }
+
+        // ── 2FA verify ────────────────────────────────────────────────────
+        function verify2FA() {
+            const code = getTOTPValue('totp-inputs');
+            if (code.length < 6) { showAlert('Enter the full 6-digit code.'); return; }
+            if (code !== '123456') { showAlert('Incorrect code. Demo code is 123456.'); return; }
+            startSession(pending2FAUser);
+            pending2FAUser = null;
+        }
+
+        // ── Session ────────────────────────────────────────────────────────
+        function startSession(user) {
+            store.session = { user, token: crypto.randomUUID(), expires: Date.now() + 30 * 60 * 1000 };
+            user.loginCount = (user.loginCount || 0) + 1;
+            sessionStart = Date.now();
+            addLog(`Signed in: ${user.email}${user.want2fa ? ' (2FA verified)' : ''}`, 'ok');
+            showDashboard(user);
+        }
+
+        function showDashboard(user) {
+            $('auth-card').style.display = 'none';
+            const dash = $('dashboard');
+            dash.style.display = 'flex';
+
+            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            $('dash-avatar').textContent = initials;
+            $('dash-name').textContent = user.name;
+            $('dash-meta').innerHTML =
+                sanitize(user.email) + ' · ' +
+                (user.want2fa
+                    ? '<span class="badge badge-green"><i class="ti ti-shield-check" style="font-size:10px"></i> 2FA active</span>'
+                    : '<span class="badge badge-warn"><i class="ti ti-shield-off" style="font-size:10px"></i> No 2FA</span>');
+            $('login-count').textContent = user.loginCount;
+
+            renderLog();
+            renderSecurityChecks(user);
+
+            if (timerID) clearInterval(timerID);
+            timerID = setInterval(() => {
+                if (!store.session || Date.now() > store.session.expires) {
+                    clearInterval(timerID);
+                    doLogout(true);
+                    return;
+                }
+                const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
+                $('session-timer').textContent =
+                    String(Math.floor(elapsed / 60)).padStart(2, '0') + ':' +
+                    String(elapsed % 60).padStart(2, '0');
+            }, 1000);
+        }
+
+        function doLogout(expired = false) {
+            if (timerID) clearInterval(timerID);
+            addLog(expired ? 'Session expired (30-min timeout)' : 'User signed out', 'warn');
+            store.session = null; sessionStart = null; pending2FAUser = null;
+            $('dashboard').style.display = 'none';
+            $('auth-card').style.display = 'block';
+            $('login-email').value = ''; $('login-password').value = '';
+            switchTab('login');
+            if (expired) showAlert('Your session expired. Please sign in again.', 'info');
+        }
+
+        // ── Forgot password ────────────────────────────────────────────────
+        async function doForgot() {
+            const email = $('forgot-email').value.trim().toLowerCase();
+            if (!validateEmail(email)) { showAlert('Enter a valid email address.'); return; }
+            await new Promise(r => setTimeout(r, 700));
+            showAlert('If that email exists, a reset link has been sent.', 'success');
+            setTimeout(() => { clearAlert(); switchTab('login'); }, 2000);
+        }
+    </script>
+</body>
+
+</html>
